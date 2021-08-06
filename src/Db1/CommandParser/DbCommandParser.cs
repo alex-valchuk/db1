@@ -19,7 +19,7 @@ namespace Db1.CommandParser
             switch (commandParts[0].ToLower())
             {
                 case "create":
-                    return new CreateTableCommand(commandParts);
+                    return new CreateTableCommand(commandText);
                 
                 case "insert":
                     return new InsertCommand(commandParts);
