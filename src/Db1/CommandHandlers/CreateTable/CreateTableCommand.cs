@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
 using Db1.CommandHandlers.Abstractions;
 using Db1.Exceptions;
 
@@ -12,9 +12,9 @@ namespace Db1.CommandHandlers
         private const byte TokenIndex_TableName = TokenIndex_Table + 1;
         private const byte TokenIndex_With = TokenIndex_TableName + 1;
         private const byte TokenIndex_Columns = TokenIndex_With + 1;
+        private const byte ColumnsIndex = TokenIndex_Columns + 1;
 
-        private const string TokenPattern = @"[-\w\d_]+";
-        private readonly string ColumnsPattern = $@"(?<=with columns\t*\(){TokenPattern}\t*(,\t*{TokenPattern}\t*)*(<=\))";
+        private const bool IgnoreCase = true;
 
         private readonly List<Column> _columns = new List<Column>();
  
@@ -25,19 +25,60 @@ namespace Db1.CommandHandlers
         public CreateTableCommand(string command)
         {
             var commandParts = command.Split(' ');
+            ValidateCommand(commandParts);
+
             TableName = commandParts[TokenIndex_TableName];
-            CollectColumns(command);
+            CollectColumns(commandParts);
         }
 
-        private void CollectColumns(string command)
+        private void ValidateCommand(string[] commandParts)
         {
-            if (!Regex.IsMatch(command, ColumnsPattern))
-            {
-                throw new InvalidCommandFormatException("Columns are not in a correct format.");
-            }
+            ValidateTokenExistence(commandParts[TokenIndex_Create], Commands.Create);
+            ValidateTokenExistence(commandParts[TokenIndex_Table], Tokens.Table);
+            ValidateTokenExistence(commandParts[TokenIndex_With], Tokens.With);
+            ValidateTokenExistence(commandParts[TokenIndex_Columns], Tokens.Columns);
+        }
 
-            var columnsString = Regex.Match(command, ColumnsPattern).Value;
-            var columns = columnsString.Split(',');
+        private void ValidateTokenExistence(string actualToken, string expectedToken)
+        {
+            if (actualToken.ToLower() != expectedToken)
+            {
+                throw new InvalidCommandFormatException($"Invalid command string: '{expectedToken}' is expected.");
+            }
+        }
+
+        private void CollectColumns(string[] commandParts)
+        {
+            for (int i = ColumnsIndex; i < commandParts.Length; i += 2)
+            {
+                var columnName = commandParts[i]
+                    .Replace("(", "")
+                    .Replace(")", "")
+                    .ToLower();
+
+                var columnsTypeString = commandParts[i + 1]
+                    .Replace(",", "")
+                    .ToLower();
+
+                byte? size = null;
+                ColumnType columnType;
+
+                if (columnsTypeString.StartsWith(ColumnType.Varchar.ToString().ToLower()))
+                {
+                    columnType = ColumnType.Varchar;
+                    size = byte.Parse(columnsTypeString
+                        .Substring(ColumnType.Varchar.ToString().Length)
+                        .Replace("(", "")
+                        .Replace(")", "")
+                        .Trim());
+                }
+                else if (!Enum.TryParse(columnsTypeString, IgnoreCase, out columnType))
+                {
+                    throw new InvalidCommandFormatException("Invalid command string: column type is expected.");
+                }
+
+                _columns.Add(CreateColumnFactory.CreateColumnByType(columnName, columnType, size));
+            }
         }
     }
 }

@@ -18,13 +18,14 @@ namespace Db1.CommandParser
             var commandParts = commandText.Split(" ");
             switch (commandParts[0].ToLower())
             {
-                case "create":
+                case Commands.Create:
                     return new CreateTableCommand(commandText);
                 
-                case "insert":
+                case Commands.Insert:
                     return new InsertCommand(commandParts);
                 
-                case "q":
+                case Commands.Quit:
+                case Commands.QuitShort:
                     return new QuitCommand();
 
                 default:

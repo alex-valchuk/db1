@@ -9,6 +9,7 @@
         public VarcharColumn(string name, byte size)
             : base(name)
         {
+            Size = size;
         }
     }
 }
