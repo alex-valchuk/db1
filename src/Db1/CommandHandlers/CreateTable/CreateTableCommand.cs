@@ -22,9 +22,8 @@ namespace Db1.CommandHandlers
 
         public Column[] Columns => _columns.ToArray();
         
-        public CreateTableCommand(string command)
+        public CreateTableCommand(string[] commandParts)
         {
-            var commandParts = command.Split(' ');
             ValidateCommand(commandParts);
 
             TableName = commandParts[TokenIndex_TableName];

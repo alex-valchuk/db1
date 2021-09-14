@@ -11,6 +11,5 @@ namespace Db1.CommandHandlers.Abstractions
         where C : IDb1Command
         where R : IDb1CommandExecutionResult
     {
-        Task<R> ExecuteAsync(C command);
     }
 }

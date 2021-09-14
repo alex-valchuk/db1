@@ -2,6 +2,5 @@
 {
     public interface IDb1CommandExecutionResult
     {
-        
     }
 }

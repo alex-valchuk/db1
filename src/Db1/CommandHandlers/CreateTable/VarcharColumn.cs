@@ -11,5 +11,10 @@
         {
             Size = size;
         }
+        
+        public override string GetColumnDefinition()
+        {
+            return $"{Name} {Type} {Size}";
+        }
     }
 }

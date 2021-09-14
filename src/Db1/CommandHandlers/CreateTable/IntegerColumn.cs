@@ -8,5 +8,10 @@
             : base(name)
         {
         }
+
+        public override string GetColumnDefinition()
+        {
+            return $"{Name} {Type}";
+        }
     }
 }
