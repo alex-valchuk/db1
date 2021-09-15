@@ -1,4 +1,5 @@
-﻿using Db1.CommandHandlers;
+﻿using Db1.BuildingBlocks.Columns;
+using Db1.CommandHandlers;
 using Xunit;
 
 namespace Db1.UnitTests.Given_a_CreateTableCommand
@@ -9,7 +10,7 @@ namespace Db1.UnitTests.Given_a_CreateTableCommand
         public void Should_parse_tokens_properly()
         {
             // Arrange
-            var commandText = "CREATE TABLE User with Columns (id integer, name varchar(100))";
+            var commandText = "CREATE TABLE User with Columns (id integer, name varchar(100));";
 
             // Act
             var sut = new CreateTableCommand(commandText.Split(' '));

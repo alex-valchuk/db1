@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Db1.CommandHandlers
+namespace Db1.BuildingBlocks.Columns
 {
     public static class CreateColumnFactory
     {

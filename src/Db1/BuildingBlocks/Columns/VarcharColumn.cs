@@ -1,4 +1,4 @@
-﻿namespace Db1.CommandHandlers
+﻿namespace Db1.BuildingBlocks.Columns
 {
     public class VarcharColumn : Column
     {

@@ -3,6 +3,7 @@
     public static class Commands
     {
         public const string Create = "create";
+        public const string Alter = "alter";
 
         public const string Insert = "insert";
         public const string Update = "update";
