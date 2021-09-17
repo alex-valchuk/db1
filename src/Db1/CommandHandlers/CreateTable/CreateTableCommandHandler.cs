@@ -1,31 +1,29 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Db1.CommandHandlers.Abstractions;
 using Db1.Exceptions;
+using Newtonsoft.Json;
 
 namespace Db1.CommandHandlers
 {
     public class CreateTableCommandHandler : Db1CommandHandlerBase<CreateTableCommand, CreateTableCommandExecutionResult>
     {
-        protected override Task<CreateTableCommandExecutionResult> ExecuteAsync(CreateTableCommand command)
+        protected override async Task<CreateTableCommandExecutionResult> ExecuteAsync(CreateTableCommand command)
         {
-            var fileName = $"{command.TableName}.tbl";
-            if (File.Exists(fileName)) throw new DuplicationException($"Table with name '{command.TableName}' already exists.");
+            var tableDefinition = command.TableDefinition;
+            var fileName = $"{tableDefinition.TableName}.tbl";
+            if (File.Exists(fileName)) throw new DuplicationException($"Table with name '{tableDefinition.TableName}' already exists.");
 
-            var fileContentBuilder = new StringBuilder();
-            fileContentBuilder.AppendLine($"{command.TableName}:");
-            fileContentBuilder.AppendLine("Columns:");
-            foreach (var column in command.Columns)
+            var serializerSettings = new JsonSerializerSettings
             {
-                fileContentBuilder.AppendLine(column.GetColumnDefinition());
-            }
-            
-            File.WriteAllText(fileName, fileContentBuilder.ToString());
+                TypeNameHandling = TypeNameHandling.Objects
+            };
+            var tableDefContent = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(tableDefinition, serializerSettings));
+            await File.WriteAllTextAsync(fileName, tableDefContent);
 
-            Console.WriteLine($"Table '{command.TableName}' has been successfully created.");
-            return Task.FromResult(new CreateTableCommandExecutionResult());
+            Console.WriteLine($"Table '{tableDefinition.TableName}' has been successfully created.");
+            return new CreateTableCommandExecutionResult();
         }
     }
 }

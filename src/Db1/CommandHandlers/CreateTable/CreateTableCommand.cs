@@ -1,11 +1,11 @@
-﻿using Db1.BuildingBlocks.Columns;
+﻿using Db1.BuildingBlocks;
 using Db1.CommandHandlers.Abstractions;
 using Db1.CommandParser;
 using Db1.Validators;
 
 namespace Db1.CommandHandlers
 {
-    public class CreateTableCommand : IDb1Command
+    public class CreateTableCommand : IDb1TableCommand
     {
         private const byte TokenIndex_Create = 0;
         private const byte TokenIndex_Table = TokenIndex_Create + 1;
@@ -14,18 +14,18 @@ namespace Db1.CommandHandlers
         private const byte TokenIndex_Columns = TokenIndex_With + 1;
         private const byte ColumnsIndex = TokenIndex_Columns + 1;
 
-        public string TableName { get; }
-
-        public Column[] Columns { get; }
-        
         public CreateTableCommand(string[] commandParts)
         {
             ValidateCommand(commandParts);
 
-            TableName = commandParts[TokenIndex_TableName];
-
-            Columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts);
+            TableDefinition = new TableDefinition
+            {
+                TableName = commandParts[TokenIndex_TableName],
+                Columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts)
+            };
         }
+
+        public TableDefinition TableDefinition { get; }
 
         private void ValidateCommand(string[] commandParts)
         {

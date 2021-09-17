@@ -17,12 +17,13 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommand
             var sut = new AlterTableCommand(commandText.Split(' '));
 
             // Assert
-            Assert.Equal("user", sut.TableName.ToLower());
+            var tableDef = sut.TableDefinition;
+            Assert.Equal("user", tableDef.TableName.ToLower());
             Assert.Equal("add", sut.Action.ToLower());
 
-            Assert.Single(sut.Columns);
+            Assert.Single(tableDef.Columns);
             
-            var roleIdColumn = sut.Columns[0] as IntegerColumn;
+            var roleIdColumn = tableDef.Columns[0] as IntegerColumn;
             Assert.NotNull(roleIdColumn);
             Assert.Equal("roleid", roleIdColumn.Name.ToLower());
         }
@@ -38,12 +39,13 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommand
             var sut = new AlterTableCommand(commandText.Split(' '));
 
             // Assert
-            Assert.Equal("user", sut.TableName.ToLower());
+            var tableDef = sut.TableDefinition;
+            Assert.Equal("user", tableDef.TableName.ToLower());
             Assert.Equal("remove", sut.Action.ToLower());
             
-            Assert.Single(sut.Columns);
+            Assert.Single(tableDef.Columns);
             
-            var roleIdColumn = sut.Columns[0] as IntegerColumn;
+            var roleIdColumn = tableDef.Columns[0] as IntegerColumn;
             Assert.NotNull(roleIdColumn);
             Assert.Equal("roleid", roleIdColumn.Name);
         }
