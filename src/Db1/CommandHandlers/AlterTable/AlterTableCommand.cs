@@ -1,4 +1,6 @@
-﻿using Db1.BuildingBlocks;
+﻿using System;
+using System.Linq;
+using Db1.BuildingBlocks;
 using Db1.CommandHandlers.Abstractions;
 using Db1.CommandParser;
 using Db1.Validators;
@@ -23,7 +25,7 @@ namespace Db1.CommandHandlers.AlterTable
             ValidateCommand(commandParts);
 
             var tableName = commandParts[TokenIndex_TableName];
-            var columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts);
+            var columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts).ToHashSet();
 
             Action = commandParts[TokenIndex_Action];
             TableDefinition = new TableDefinition
@@ -31,6 +33,12 @@ namespace Db1.CommandHandlers.AlterTable
                 TableName = tableName,
                 Columns = columns
             };
+        }
+
+        public AlterTableCommand(string action, TableDefinition tableDefinition)
+        {
+            Action = string.IsNullOrWhiteSpace(action) ? throw new ArgumentNullException(nameof(action)) : action;
+            TableDefinition = tableDefinition ?? throw new ArgumentNullException(nameof(tableDefinition));
         }
 
         private void ValidateCommand(string[] commandParts)

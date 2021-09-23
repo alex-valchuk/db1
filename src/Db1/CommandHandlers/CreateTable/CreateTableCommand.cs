@@ -1,4 +1,5 @@
-﻿using Db1.BuildingBlocks;
+﻿using System.Linq;
+using Db1.BuildingBlocks;
 using Db1.CommandHandlers.Abstractions;
 using Db1.CommandParser;
 using Db1.Validators;
@@ -21,7 +22,7 @@ namespace Db1.CommandHandlers
             TableDefinition = new TableDefinition
             {
                 TableName = commandParts[TokenIndex_TableName],
-                Columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts)
+                Columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts).ToHashSet()
             };
         }
 

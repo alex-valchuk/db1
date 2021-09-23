@@ -1,4 +1,5 @@
-﻿using Db1.BuildingBlocks.Columns;
+﻿using System.Linq;
+using Db1.BuildingBlocks.Columns;
 using Db1.CommandHandlers;
 using Xunit;
 
@@ -18,13 +19,15 @@ namespace Db1.UnitTests.Given_a_CreateTableCommand
             // Assert
             var tableDef = sut.TableDefinition;
             Assert.Equal("user", tableDef.TableName.ToLower());
-            Assert.Equal(2, tableDef.Columns.Length);
+
+            var columns = tableDef.Columns.ToArray();
+            Assert.Equal(2, columns.Length);
             
-            var idColumn = tableDef.Columns[0] as IntegerColumn;
+            var idColumn = columns[0] as IntegerColumn;
             Assert.NotNull(idColumn);
             Assert.Equal("id", idColumn.Name);
 
-            var nameColumn = tableDef.Columns[1] as VarcharColumn;
+            var nameColumn = columns[1] as VarcharColumn;
             Assert.NotNull(nameColumn);
             Assert.Equal("name", nameColumn.Name);
             Assert.Equal(100, nameColumn.Size);

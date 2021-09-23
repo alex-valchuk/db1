@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Db1.CommandHandlers.Abstractions;
 using Db1.Exceptions;
@@ -22,8 +21,7 @@ namespace Db1.CommandHandlers
             var tableDefContent = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(tableDefinition, serializerSettings));
             await File.WriteAllTextAsync(fileName, tableDefContent);
 
-            Console.WriteLine($"Table '{tableDefinition.TableName}' has been successfully created.");
-            return new CreateTableCommandExecutionResult();
+            return new CreateTableCommandExecutionResult($"Table '{tableDefinition.TableName}' has been successfully created.");
         }
     }
 }

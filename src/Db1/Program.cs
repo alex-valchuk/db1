@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using Db1.CommandHandlers;
 using Db1.CommandParser;
+using Db1.FileSystem;
 
 namespace Db1
 {
     public static class Program
     {
         private static readonly DbCommandParser _commandParser = new DbCommandParser();
-        private static readonly CommandHandlersFactory _commandHandlersFactory = new CommandHandlersFactory();
+        private static readonly CommandHandlersFactory _commandHandlersFactory = new CommandHandlersFactory(new FileSystemHelper());
         
         public static async Task Main()
         {
@@ -33,7 +34,8 @@ namespace Db1
                         default:
                         {
                             var commandHandler = _commandHandlersFactory.GetHandlerByCommand(command);
-                            await commandHandler.ExecuteAsync(command);
+                            var result = await commandHandler.ExecuteAsync(command);
+                            Console.WriteLine(result.Message);
                             break;
                         }
                     }

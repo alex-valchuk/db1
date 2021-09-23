@@ -2,5 +2,6 @@
 {
     public interface IDb1CommandExecutionResult
     {
+        string Message { get; }
     }
 }

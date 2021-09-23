@@ -1,4 +1,5 @@
-﻿using Db1.BuildingBlocks.Columns;
+﻿using System.Linq;
+using Db1.BuildingBlocks.Columns;
 using Db1.CommandHandlers.AlterTable;
 using Xunit;
 
@@ -21,9 +22,10 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommand
             Assert.Equal("user", tableDef.TableName.ToLower());
             Assert.Equal("add", sut.Action.ToLower());
 
-            Assert.Single(tableDef.Columns);
+            var columns = tableDef.Columns.ToArray();
+            Assert.Single(columns);
             
-            var roleIdColumn = tableDef.Columns[0] as IntegerColumn;
+            var roleIdColumn = columns[0] as IntegerColumn;
             Assert.NotNull(roleIdColumn);
             Assert.Equal("roleid", roleIdColumn.Name.ToLower());
         }
@@ -42,10 +44,11 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommand
             var tableDef = sut.TableDefinition;
             Assert.Equal("user", tableDef.TableName.ToLower());
             Assert.Equal("remove", sut.Action.ToLower());
+
+            var columns = tableDef.Columns.ToArray();
+            Assert.Single(columns);
             
-            Assert.Single(tableDef.Columns);
-            
-            var roleIdColumn = tableDef.Columns[0] as IntegerColumn;
+            var roleIdColumn = columns[0] as IntegerColumn;
             Assert.NotNull(roleIdColumn);
             Assert.Equal("roleid", roleIdColumn.Name);
         }

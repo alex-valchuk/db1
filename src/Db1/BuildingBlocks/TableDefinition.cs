@@ -8,14 +8,14 @@ namespace Db1.BuildingBlocks
 {
     public class TableDefinition
     {
-        private List<Column> _columns;
+        private HashSet<Column> _columns = new HashSet<Column>();
 
         public string TableName { get; set; }
 
-        public Column[] Columns
+        public HashSet<Column> Columns
         {
-            get => _columns.ToArray();
-            set => _columns = value.ToList();
+            get => _columns;
+            set => _columns = value;
         }
 
         public void AddColumn(Column newColumn)

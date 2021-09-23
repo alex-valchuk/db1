@@ -6,11 +6,14 @@
         
         public abstract ColumnType Type { get; }
 
-        public Column(string name)
+        protected Column(string name)
         {
             Name = name;
         }
 
-        public abstract string GetColumnDefinition();
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
