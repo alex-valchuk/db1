@@ -10,6 +10,11 @@ namespace Db1.BuildingBlocks
     {
         private HashSet<Column> _columns = new HashSet<Column>();
 
+        public TableDefinition(string tableName)
+        {
+            TableName = tableName;
+        }
+
         public string TableName { get; set; }
 
         public HashSet<Column> Columns

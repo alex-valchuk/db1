@@ -53,6 +53,18 @@ namespace Db1.CommandHandlers.AlterTable
             return new AlterTableCommandExecutionResult($"Column(s) '{string.Join(",", alterTableDefinition.Columns)}' has(ve) been successfully added.");
         }
 
+        private async Task<TableDefinition> GetTableDefinitionAsync(string fileName)
+        {
+            var tableDefContent = await _fileSystemHelper.ReadAllTextAsync(fileName);
+            return JsonConvert.DeserializeObject<TableDefinition>(tableDefContent, _serializerSettings);
+        }
+
+        private async Task CommitAsync(string fileName, TableDefinition finalTableDefinition)
+        {
+            var finalTableDefContent = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(finalTableDefinition, _serializerSettings));
+            await _fileSystemHelper.WriteAllTextAsync(fileName, finalTableDefContent);
+        }
+
         private async Task<AlterTableCommandExecutionResult> PerformRemovalAsync(string fileName, TableDefinition alterTableDefinition)
         {
             var existingTableDefinition = await GetTableDefinitionAsync(fileName);
@@ -65,18 +77,6 @@ namespace Db1.CommandHandlers.AlterTable
             await CommitAsync(fileName, existingTableDefinition);
 
             return new AlterTableCommandExecutionResult($"Column(s) '{string.Join(",", alterTableDefinition.Columns)}' has(ve) been successfully removed.");
-        }
-
-        private async Task<TableDefinition> GetTableDefinitionAsync(string fileName)
-        {
-            var tableDefContent = await _fileSystemHelper.ReadAllTextAsync(fileName);
-            return JsonConvert.DeserializeObject<TableDefinition>(tableDefContent, _serializerSettings);
-        }
-
-        private async Task CommitAsync(string fileName, TableDefinition finalTableDefinition)
-        {
-            var finalTableDefContent = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(finalTableDefinition, _serializerSettings));
-            await _fileSystemHelper.WriteAllTextAsync(fileName, finalTableDefContent);
         }
     }
 }

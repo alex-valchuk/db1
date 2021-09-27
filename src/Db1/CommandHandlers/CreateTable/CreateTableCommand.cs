@@ -19,9 +19,8 @@ namespace Db1.CommandHandlers
         {
             ValidateCommand(commandParts);
 
-            TableDefinition = new TableDefinition
+            TableDefinition = new TableDefinition(commandParts[TokenIndex_TableName])
             {
-                TableName = commandParts[TokenIndex_TableName],
                 Columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts).ToHashSet()
             };
         }

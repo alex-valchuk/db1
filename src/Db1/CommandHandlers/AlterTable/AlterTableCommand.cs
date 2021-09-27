@@ -28,9 +28,8 @@ namespace Db1.CommandHandlers.AlterTable
             var columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts).ToHashSet();
 
             Action = commandParts[TokenIndex_Action];
-            TableDefinition = new TableDefinition
+            TableDefinition = new TableDefinition(tableName)
             {
-                TableName = tableName,
                 Columns = columns
             };
         }

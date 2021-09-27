@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Db1.BuildingBlocks;
+using Db1.BuildingBlocks.Columns;
+using Db1.CommandHandlers;
 using Db1.CommandHandlers.Abstractions;
 using Db1.CommandHandlers.AlterTable;
 using Db1.Exceptions;
 using Db1.FileSystem.Abstractions;
 using FakeItEasy;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommandHandler
@@ -14,6 +17,10 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommandHan
     {
         private readonly IFileSystemHelper _fileSystemHelper;
         private readonly AlterTableCommandHandler _sut;
+        private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
 
         public When_ExecuteAsync_is_invoked()
         {
@@ -51,13 +58,12 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommandHan
         public async Task Should_throw_NonExistingResourceException_when_table_with_specified_name_does_not_exist()
         {
             // Arrange
-            var tableDefinition = new TableDefinition
-            {
-                TableName = "some_table"
-            };
+            var tableDefinition = new TableDefinition("some_table");
             var command = new AlterTableCommand("remove", tableDefinition);
 
-            A.CallTo(() => _fileSystemHelper.Exists($"{tableDefinition.TableName}.tbl")).Returns(false);
+            A
+                .CallTo(() => _fileSystemHelper.Exists($"{tableDefinition.TableName}.tbl"))
+                .Returns(false);
 
             Task Action() => _sut.ExecuteAsync(command);
 
@@ -67,16 +73,83 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommandHan
         }
 
         [Fact]
+        public async Task Should_perform_addition_when_action_is_add()
+        {
+            // Arrange
+            var alterTableDefinition = new TableDefinition("some_table");
+            alterTableDefinition.AddColumn(new IntegerColumn("roleId"));
+            alterTableDefinition.AddColumn(new VarcharColumn("Name", 255));
+
+            var command = new AlterTableCommand(Tokens.Add, alterTableDefinition);
+            var fileName = $"{alterTableDefinition.TableName}.tbl";
+            
+            var existingTableDefinition = new TableDefinition(alterTableDefinition.TableName);
+            existingTableDefinition.AddColumn(new IntegerColumn("id"));
+
+            var finalTableDefinition = new TableDefinition(alterTableDefinition.TableName);
+            foreach (var column in existingTableDefinition.Columns) finalTableDefinition.AddColumn(column);
+            foreach (var column in alterTableDefinition.Columns) finalTableDefinition.AddColumn(column);
+            
+            A
+                .CallTo(() => _fileSystemHelper.Exists(fileName))
+                .Returns(true);
+            A
+                .CallTo(() => _fileSystemHelper.ReadAllTextAsync(fileName))
+                .Returns(JsonConvert.SerializeObject(existingTableDefinition, _serializerSettings));
+            
+            // Act
+            await _sut.ExecuteAsync(command);
+            
+            // Assert
+            A
+                .CallTo(() => _fileSystemHelper.WriteAllTextAsync(fileName, JsonConvert.SerializeObject(finalTableDefinition, _serializerSettings)))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task Should_perform_removal_when_action_is_remove()
+        {
+            // Arrange
+            var alterTableDefinition = new TableDefinition("some_table");
+            alterTableDefinition.AddColumn(new IntegerColumn("roleId"));
+
+            var command = new AlterTableCommand(Tokens.Remove, alterTableDefinition);
+            var fileName = $"{alterTableDefinition.TableName}.tbl";
+            
+            var existingTableDefinition = new TableDefinition(alterTableDefinition.TableName);
+            existingTableDefinition.AddColumn(new IntegerColumn("id"));
+            existingTableDefinition.AddColumn(new IntegerColumn("roleId"));
+
+            var finalTableDefinition = new TableDefinition(alterTableDefinition.TableName);
+            foreach (var column in existingTableDefinition.Columns) finalTableDefinition.AddColumn(column);
+            foreach (var column in alterTableDefinition.Columns) finalTableDefinition.RemoveColumn(column);
+            
+            A
+                .CallTo(() => _fileSystemHelper.Exists(fileName))
+                .Returns(true);
+            A
+                .CallTo(() => _fileSystemHelper.ReadAllTextAsync(fileName))
+                .Returns(JsonConvert.SerializeObject(existingTableDefinition, _serializerSettings));
+            
+            // Act
+            await _sut.ExecuteAsync(command);
+            
+            // Assert
+            A
+                .CallTo(() => _fileSystemHelper.WriteAllTextAsync(fileName, JsonConvert.SerializeObject(finalTableDefinition, _serializerSettings)))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
         public async Task Should_throw_NotSupportedException_when_action_is_not_from_supported()
         {
             // Arrange
-            var tableDefinition = new TableDefinition
-            {
-                TableName = "some_table"
-            };
+            var tableDefinition = new TableDefinition("some_table");
             var command = new AlterTableCommand("some_action", tableDefinition);
 
-            A.CallTo(() => _fileSystemHelper.Exists($"{tableDefinition.TableName}.tbl")).Returns(true);
+            A
+                .CallTo(() => _fileSystemHelper.Exists($"{tableDefinition.TableName}.tbl"))
+                .Returns(true);
 
             Task Action() => _sut.ExecuteAsync(command);
 
