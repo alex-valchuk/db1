@@ -59,7 +59,7 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommandHan
         {
             // Arrange
             var tableDefinition = new TableDefinition("some_table");
-            var command = new AlterTableCommand("remove", tableDefinition);
+            var command = new AlterTableCommand(Tokens.Remove, tableDefinition);
 
             A
                 .CallTo(() => _fileSystemHelper.Exists($"{tableDefinition.TableName}.tbl"))

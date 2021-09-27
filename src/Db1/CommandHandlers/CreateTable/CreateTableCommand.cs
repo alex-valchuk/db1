@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Db1.BuildingBlocks;
 using Db1.CommandHandlers.Abstractions;
 using Db1.CommandParser;
@@ -23,6 +24,11 @@ namespace Db1.CommandHandlers
             {
                 Columns = ColumnsParser.CollectColumns(ColumnsIndex, commandParts).ToHashSet()
             };
+        }
+
+        public CreateTableCommand(TableDefinition tableDefinition)
+        {
+            TableDefinition = tableDefinition ?? throw new ArgumentNullException(nameof(tableDefinition));
         }
 
         public TableDefinition TableDefinition { get; }

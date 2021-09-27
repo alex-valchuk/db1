@@ -18,7 +18,7 @@ namespace Db1.CommandHandlers
         {
             return command switch
             {
-                CreateTableCommand _ => new CreateTableCommandHandler(),
+                CreateTableCommand _ => new CreateTableCommandHandler(_fileSystemHelper),
                 AlterTableCommand _ => new AlterTableCommandHandler(_fileSystemHelper),
 
                 InsertCommand _ => new InsertCommandHandler(),

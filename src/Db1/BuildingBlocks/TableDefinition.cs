@@ -20,7 +20,20 @@ namespace Db1.BuildingBlocks
         public HashSet<Column> Columns
         {
             get => _columns;
-            set => _columns = value;
+            set
+            {
+                var duplicates = value
+                    .GroupBy(c => c.Name)
+                    .Where(gr => gr.Count() > 1)
+                    .Select(gr => gr.Key)
+                    .ToArray(); 
+                if (duplicates.Length > 0)
+                {
+                    throw new DuplicationException($"Duplicated columns detected: {string.Join(",", duplicates.Select(d => d))}");
+                }
+                
+                _columns = value;
+            }
         }
 
         public void AddColumn(Column newColumn)
