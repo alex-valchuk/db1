@@ -9,4 +9,16 @@
       <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Const\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Const\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Const\**" />
+    </ItemGroup>
+
 </Project>

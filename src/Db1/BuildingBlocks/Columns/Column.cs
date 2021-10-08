@@ -5,6 +5,8 @@
         public string Name { get; }
         
         public abstract ColumnType Type { get; }
+        
+        public abstract int Size { get; }
 
         protected Column(string name)
         {

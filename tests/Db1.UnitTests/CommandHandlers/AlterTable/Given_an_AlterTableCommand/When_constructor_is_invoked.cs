@@ -37,7 +37,6 @@ namespace Db1.UnitTests.CommandHandlers.AlterTable.Given_an_AlterTableCommand
             var commandText = "ALTER TABLE User REMOVE COLUMNS (RoleId integer);";
 
             // Act
-            
             var sut = new AlterTableCommand(commandText.Split(' '));
 
             // Assert

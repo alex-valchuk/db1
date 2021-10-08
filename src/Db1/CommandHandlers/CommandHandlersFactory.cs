@@ -2,6 +2,7 @@
 using Db1.CommandHandlers.Abstractions;
 using Db1.CommandHandlers.AlterTable;
 using Db1.FileSystem.Abstractions;
+using Db1.Services;
 
 namespace Db1.CommandHandlers
 {
@@ -21,7 +22,7 @@ namespace Db1.CommandHandlers
                 CreateTableCommand _ => new CreateTableCommandHandler(_fileSystemHelper),
                 AlterTableCommand _ => new AlterTableCommandHandler(_fileSystemHelper),
 
-                InsertCommand _ => new InsertCommandHandler(),
+                InsertCommand _ => new InsertCommandHandler(new TableDefinitionService(_fileSystemHelper), new InsertService(_fileSystemHelper)),
                 _ => null
             };
         }

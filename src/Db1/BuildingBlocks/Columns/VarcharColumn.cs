@@ -4,7 +4,7 @@
     {
         public override ColumnType Type => ColumnType.Varchar;
 
-        public byte Size { get; }
+        public override int Size { get; }
 
         public VarcharColumn(string name, byte size)
             : base(name)

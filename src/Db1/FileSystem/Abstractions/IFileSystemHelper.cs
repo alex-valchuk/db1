@@ -7,5 +7,6 @@ namespace Db1.FileSystem.Abstractions
         bool Exists(string fileName);
         Task<string> ReadAllTextAsync(string fileName);
         Task WriteAllTextAsync(string fileName, string contents);
+        string[] GetFileNamesWithPrefix(string directory, string filePrefix);
     }
 }

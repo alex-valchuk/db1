@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Db1.FileSystem.Abstractions;
 
@@ -19,6 +21,14 @@ namespace Db1.FileSystem
         public Task WriteAllTextAsync(string fileName, string contents)
         {
             return File.WriteAllTextAsync(fileName, contents);
+        }
+
+        public string[] GetFileNamesWithPrefix(string directory, string filePrefix)
+        {
+            return Directory
+                .GetFiles(directory)
+                .Where(f => f.Contains(filePrefix, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
         }
     }
 }
