@@ -14,21 +14,22 @@ namespace Db1.CommandHandlers
     public class InsertCommandHandler : Db1CommandHandlerBase<InsertCommand, InsertCommandExecutionResult>
     {
         private readonly ITableDefinitionService _tableDefinitionService;
-        private readonly IInsertService _insertService;
+        private readonly IServicesFactory _servicesFactory;
 
         public InsertCommandHandler(
-            ITableDefinitionService tableDefinitionService,
-            IInsertService insertService)
+            IServicesFactory servicesFactory)
         {
-            _tableDefinitionService = tableDefinitionService ?? throw new ArgumentNullException(nameof(tableDefinitionService));
-            _insertService = insertService ?? throw new ArgumentNullException(nameof(insertService));
+            _servicesFactory = servicesFactory ?? throw new ArgumentNullException(nameof(servicesFactory));
+            _tableDefinitionService = servicesFactory.GetTableDefinitionService();
         }
 
         protected override async Task<InsertCommandExecutionResult> ExecuteAsync(InsertCommand command)
         {
             var tableDefinition = await _tableDefinitionService.GetTableDefinitionAsync(command.TableName);
             var dataToInsert = CollectDataToInsert(command, tableDefinition);
-            await _insertService.ExecuteAsync(dataToInsert, tableDefinition);
+            
+            var insertService = _servicesFactory.GetInsertService(tableDefinition);
+            await insertService.ExecuteAsync(dataToInsert, tableDefinition);
 
             return new InsertCommandExecutionResult($"{command.Rows.Length} entries have been successfully inserted into '{command.TableName}' table.", command.Rows.Length);
         }

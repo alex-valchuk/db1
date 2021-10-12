@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Db1.FileSystem.Abstractions
 {
@@ -7,6 +8,7 @@ namespace Db1.FileSystem.Abstractions
         bool Exists(string fileName);
         Task<string> ReadAllTextAsync(string fileName);
         Task WriteAllTextAsync(string fileName, string contents);
+        Task AppendAllLinesAsync(string fileName, IEnumerable<string> lines);
         string[] GetFileNamesWithPrefix(string directory, string filePrefix);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace Db1.FileSystem
         public Task WriteAllTextAsync(string fileName, string contents)
         {
             return File.WriteAllTextAsync(fileName, contents);
+        }
+
+        public Task AppendAllLinesAsync(string fileName, IEnumerable<string> lines)
+        {
+            return File.AppendAllLinesAsync(fileName, lines);
         }
 
         public string[] GetFileNamesWithPrefix(string directory, string filePrefix)

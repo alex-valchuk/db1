@@ -16,10 +16,6 @@ namespace Db1.CommandHandlers.AlterTable
         private const byte TokenIndex_Columns = TokenIndex_Action + 1;
         private const byte ColumnsIndex = TokenIndex_Columns + 1;
 
-        public TableDefinition TableDefinition { get; }
-        
-        public string Action { get; }
-
         public AlterTableCommand(string[] commandParts)
         {
             ValidateCommand(commandParts);
@@ -33,6 +29,10 @@ namespace Db1.CommandHandlers.AlterTable
                 Columns = columns
             };
         }
+
+        public TableDefinition TableDefinition { get; }
+        
+        public string Action { get; }
 
         public AlterTableCommand(string action, TableDefinition tableDefinition)
         {

@@ -7,7 +7,7 @@ namespace Db1.UnitTests.CommandHandlers.Insert.Given_an_InsertCommand
     public class When_constructor_is_invoked
     {
         [Fact]
-        public void Should_parse_tokens_properly()
+        public void Should_parse_tokens_properly_when_each_is_on_new_line()
         {
             // Arrange
             var commandText = @"INSERT INTO User [
@@ -17,10 +17,11 @@ namespace Db1.UnitTests.CommandHandlers.Insert.Given_an_InsertCommand
                 category
             ]
             ROWS [
-             ( 1, 'Alex', 1, 'creator' ),
-             ( 2, 'Sam', 2, 'director' ),
+             ( 1, 'Alex', 1, 'creator' ) ,( 2, 'Sam', 2, 'director' ),
              ( 3, 'Tom', 3, 'visitor' ),
-            ];";
+             ( 4, 'Ann (Beasty) Hateway', 4, 'employee' ),
+             ( 5, 'Denis', 4, 'employee' ),( 6, 'Denis' , 4 , ' ( dasdsa, asda, adsd ) ] employee' ),
+             ( 7, 'Denis', 4, 'employee' ) ];";
 
             // Act
             var sut = new InsertCommand(commandText.Split(' '));

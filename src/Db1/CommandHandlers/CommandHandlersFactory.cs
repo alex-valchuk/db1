@@ -22,7 +22,8 @@ namespace Db1.CommandHandlers
                 CreateTableCommand _ => new CreateTableCommandHandler(_fileSystemHelper),
                 AlterTableCommand _ => new AlterTableCommandHandler(_fileSystemHelper),
 
-                InsertCommand _ => new InsertCommandHandler(new TableDefinitionService(_fileSystemHelper), new InsertService(_fileSystemHelper)),
+                InsertCommand _ => new InsertCommandHandler(
+                    new ServicesFactory(_fileSystemHelper)),
                 _ => null
             };
         }

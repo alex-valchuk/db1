@@ -7,5 +7,7 @@
         public const string Add = "add";
         public const string Remove = "remove";
         public const string Columns = "columns";
+        public const string Into = "into";
+        public const string Rows = "rows";
     }
 }
